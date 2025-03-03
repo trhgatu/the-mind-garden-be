@@ -3,29 +3,9 @@ import controller from '../../controllers/post.controller.js';
 import { authMiddleware } from '../../middlewares/auth.middleware.js';
 const router = express.Router();
 
-/**
- * @swagger
- * /post:
- *   get:
- *     summary: Lấy danh sách bài viết
- *     description: Trả về danh sách tất cả bài viết.
- *     tags: [Post]
- *     responses:
- *       200:
- *         description: Thành công
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                   name:
- *                     type: string
- */
 router.get('/', controller.index);
-router.post('/create', authMiddleware, controller.create)
-
+router.post('/create', authMiddleware, controller.create);
+router.get("/:id", controller.detail);
+router.patch("/:id", authMiddleware, controller.update);
+router.delete("/:id", authMiddleware, controller.delete);
 export default router;
