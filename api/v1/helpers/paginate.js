@@ -15,10 +15,14 @@ const paginate = async (model, query = {}, page = 1, limit = 10, populateFields 
             .sort({ createdAt: -1 })
 
         return {
-            page,
-            limit,
-            totalItems,
-            totalPages,
+            meta: {
+                pagination: {
+                    page,
+                    limit,
+                    totalItems,
+                    totalPages,
+                },
+            },
             data,
         };
     } catch(error) {

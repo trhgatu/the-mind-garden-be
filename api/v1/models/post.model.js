@@ -1,5 +1,8 @@
 import { mongoose } from "../../../config/database.js";
 import { v4 as uuidv4 } from "uuid";
+import slug from "mongoose-slug-updater";
+
+mongoose.plugin(slug);
 
 const postSchema = new mongoose.Schema(
   {
@@ -19,7 +22,12 @@ const postSchema = new mongoose.Schema(
     },
     title: {
       type: String,
-      required: false,
+      required: true,
+    },
+    slug: {
+      type: String,
+      slug: "title",
+      unique: true,
     },
     excerpt: {
       type: String,
@@ -27,7 +35,7 @@ const postSchema = new mongoose.Schema(
     },
     content: {
       type: String,
-      required: true,
+      required: false, //true
     },
     media: [
       {
@@ -38,7 +46,7 @@ const postSchema = new mongoose.Schema(
     categoryId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
-      required: true,
+      required: false, //true
     },
     tags: [
       {
@@ -83,6 +91,10 @@ const postSchema = new mongoose.Schema(
       description: { type: String },
       keywords: [{ type: String }],
     },
+    featured: {
+      type: Boolean,
+      default: false
+    },
     isDel: {
       type: Boolean,
       default: false,
@@ -90,6 +102,7 @@ const postSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
 
 const Post = mongoose.model("Post", postSchema, "posts");
 
