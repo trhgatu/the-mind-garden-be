@@ -16,6 +16,7 @@ const startServer = async () => {
         const corsOptions = {
             origin: [
                 "http://localhost:3000",
+                "https://https://the-mind-garden.vercel.app"
             ],
             credentials: true,
             allowedHeaders: ["Content-Type", "Authorization"],
