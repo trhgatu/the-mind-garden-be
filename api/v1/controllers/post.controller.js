@@ -11,7 +11,8 @@ const controller = {
             const { page, limit } = req.query;
 
             const filter = getPostFilter(req.query);
-
+            console.log('Query params:', req.query);
+            console.log('Filter:', filter);
             const result = await paginate(
                 Post,
                 filter,

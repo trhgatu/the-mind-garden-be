@@ -5,6 +5,10 @@ export const getPostFilter = (query) => {
         filter.featured = true;
     }
 
+    if(query.categoryId) {
+        filter.categoryId = query.categoryId;
+    }
+
     if(query.authorId) {
         filter.authorId = query.authorId;
     }
