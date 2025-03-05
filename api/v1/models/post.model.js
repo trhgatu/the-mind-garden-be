@@ -77,8 +77,8 @@ const postSchema = new mongoose.Schema(
     ],
     status: {
       type: String,
-      enum: ["public", "friends", "private"],
-      default: "public",
+      enum: ["published", "draft"],
+      default: "published",
     },
     location: {
       type: String,
