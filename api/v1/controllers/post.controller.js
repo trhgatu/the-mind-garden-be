@@ -80,7 +80,7 @@ const controller = {
                 media: media || [],
                 tags: tags || [],
                 categoryId,
-                status: status || "public",
+                status: status || "published",
                 location,
                 feeling,
                 featured: featured
