@@ -10,10 +10,10 @@ const controller = {
 
             const result = await paginate(Quote, {}, page, limit, "createdBy");
 
-            if (result.data.length > 0) {
+            if(result.data.length > 0) {
                 const populatedQuotes = await Promise.all(
                     result.data.map(async (quote) => {
-                        if (quote.createdBy) {
+                        if(quote.createdBy) {
                             quote.createdBy = await User.findById(quote.createdBy).select("-password");
                         }
                         return quote;
@@ -23,7 +23,7 @@ const controller = {
             }
 
             res.status(200).json(result);
-        } catch (error) {
+        } catch(error) {
             res.status(500).json({ message: "Lỗi khi lấy danh sách quotes", error });
         }
     },
@@ -35,12 +35,12 @@ const controller = {
 
             const quote = await Quote.findById(id).populate("createdBy", "-password");
 
-            if (!quote) {
+            if(!quote) {
                 return res.status(404).json({ message: "Quote không tồn tại" });
             }
 
             res.status(200).json({ success: true, quote });
-        } catch (error) {
+        } catch(error) {
             res.status(500).json({ message: "Lỗi khi lấy quote", error });
         }
     },
@@ -48,7 +48,7 @@ const controller = {
     /* [POST] api/v1/quotes/create - Tạo quote mới */
     create: async (req, res) => {
         try {
-            const {title, text, author, source, reflection } = req.body;
+            const { title, text, author, source, reflection } = req.body;
             const createdBy = req.user?.id || null;
 
             const newQuote = new Quote({
@@ -58,6 +58,7 @@ const controller = {
                 reflection,
                 source,
                 createdBy,
+                date: new Date().toISOString().split("T")[0]
             });
 
             const savedQuote = await newQuote.save();
@@ -67,7 +68,7 @@ const controller = {
                 message: "Tạo quote thành công",
                 quote: savedQuote,
             });
-        } catch (error) {
+        } catch(error) {
             res.status(500).json({ message: "Lỗi khi tạo quote", error });
         }
     },
@@ -84,7 +85,7 @@ const controller = {
                 { new: true }
             );
 
-            if (!updatedQuote) {
+            if(!updatedQuote) {
                 return res.status(404).json({ message: "Không tìm thấy quote" });
             }
 
@@ -93,7 +94,7 @@ const controller = {
                 message: "Cập nhật quote thành công",
                 quote: updatedQuote,
             });
-        } catch (error) {
+        } catch(error) {
             res.status(500).json({ message: "Lỗi khi cập nhật quote", error });
         }
     },
@@ -105,12 +106,12 @@ const controller = {
 
             const deletedQuote = await Quote.findByIdAndDelete(id);
 
-            if (!deletedQuote) {
+            if(!deletedQuote) {
                 return res.status(404).json({ message: "Không tìm thấy quote" });
             }
 
             res.status(200).json({ message: "Xóa quote thành công", quote: deletedQuote });
-        } catch (error) {
+        } catch(error) {
             res.status(500).json({ message: "Lỗi khi xóa quote", error });
         }
     },
@@ -122,25 +123,26 @@ const controller = {
 
             let quote = await Quote.findOne({ date: today });
 
-            if (!quote) {
+            if(!quote) {
                 const count = await Quote.countDocuments();
-                if (count === 0) {
+                if(count === 0) {
                     return res.status(404).json({ message: "Không có quote nào trong database." });
                 }
 
                 const randomIndex = Math.floor(Math.random() * count);
-                quote = await Quote.findOne().skip(randomIndex);
+                quote = await Quote.findOne({ date: { $exists: false } }).skip(randomIndex);
 
-                if (quote) {
+                if(quote) {
                     quote.date = today;
                     await quote.save();
                 }
+
             }
 
             res.status(200).json({
                 data: quote
             });
-        } catch (error) {
+        } catch(error) {
             res.status(500).json({ message: "Lỗi khi lấy Quote of the Day", error });
         }
     },
