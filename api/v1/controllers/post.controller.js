@@ -19,13 +19,13 @@ const controller = {
                 "authorId categoryId"
             );
 
-            if (result.data.length > 0) {
+            if(result.data.length > 0) {
                 const populatedPosts = await Promise.all(
                     result.data.map(async (post) => {
-                        if (post.authorId) {
+                        if(post.authorId) {
                             post.authorId = await User.findById(post.authorId).select("-password");
                         }
-                        if (post.categoryId) {
+                        if(post.categoryId) {
                             post.categoryId = await Category.findById(post.categoryId);
                         }
                         return post;
@@ -45,7 +45,7 @@ const controller = {
         try {
             const { slug } = req.params;
 
-            const post = await Post.findOne({slug})
+            const post = await Post.findOne({ slug })
                 .populate("authorId", "-password")
                 .populate("categoryId");
 
@@ -62,7 +62,7 @@ const controller = {
     /* [POST] api/v1/posts/create */
     create: async (req, res) => {
         try {
-            const { title, content, media, tags, status, featured, location, feeling, isAI, categoryId } = req.body;
+            const { title, excerpt, content, media, tags, status, featured, location, feeling, isAI, categoryId } = req.body;
             const authorId = req.user?.id || null;
             const isAIPost = isAI || !authorId;
 
@@ -75,6 +75,7 @@ const controller = {
                 authorId,
                 isAI: isAIPost,
                 title,
+                excerpt,
                 content,
                 media: media || [],
                 tags: tags || [],
