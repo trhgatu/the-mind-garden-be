@@ -37,12 +37,10 @@ const postSchema = new mongoose.Schema(
       type: String,
       required: false, //true
     },
-    media: [
-      {
-        url: { type: String, required: true },
-        type: { type: String, enum: ["image", "video"], required: true },
-      },
-    ],
+    thumbnail : {
+      type: String,
+      required: false
+    },
     categoryId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",

@@ -1,3 +1,4 @@
+import { uploadImageToSupabase, deleteImageFromSupabase } from "../services/supabase/supabaseServices.js";
 import Post from "../models/post.model.js";
 import User from "../models/user.model.js";
 import Category from "../models/category.model.js";
@@ -62,7 +63,7 @@ const controller = {
     /* [POST] api/v1/posts/create */
     create: async (req, res) => {
         try {
-            const { title, excerpt, content, media, tags, status, featured, location, feeling, isAI, categoryId } = req.body;
+            const { title, excerpt, content, tags, status, thumbnail, featured, location, feeling, isAI, categoryId } = req.body;
             const authorId = req.user?.id || null;
             const isAIPost = isAI || !authorId;
 
@@ -71,13 +72,16 @@ const controller = {
                 return res.status(400).json({ message: "Danh mục không tồn tại." });
             }
 
+            if(!thumbnail) {
+                return res.status(400).json({ message: "Vui lòng tải lên ảnh thumbnail." });
+            }
             const newPost = new Post({
                 authorId,
                 isAI: isAIPost,
                 title,
                 excerpt,
                 content,
-                media: media || [],
+                thumbnail,
                 tags: tags || [],
                 categoryId,
                 status: status || "published",
@@ -87,6 +91,7 @@ const controller = {
             });
 
             const savedPost = await newPost.save();
+
             res.status(201).json({
                 success: true,
                 message: "Đăng bài viết thành công",
