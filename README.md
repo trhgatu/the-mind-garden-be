@@ -1,7 +1,4 @@
-📜 README.md - Backend The Mind Garden
-md
-Copy
-Edit
+
 # 🌱 The Mind Garden - Backend API
 
 **The Mind Garden** là một API RESTful được xây dựng bằng **Node.js**, **Express.js** và **MongoDB**.  
