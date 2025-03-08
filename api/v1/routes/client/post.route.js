@@ -7,6 +7,7 @@ const router = express.Router();
 router.get('/', controller.index);
 router.post('/create', uploadSingleImage, controller.create); //authMiddleware
 router.get("/:slug", controller.detail);
-router.patch("/:id", authMiddleware, controller.update);
-router.delete("/:id", authMiddleware, controller.delete);
+router.put("/:id", controller.update);
+router.delete("/soft-delete/:id", controller.delete);
+router.delete("/hard-delete/:id", controller.hardDelete);
 export default router;

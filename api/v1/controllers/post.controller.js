@@ -54,7 +54,10 @@ const controller = {
                 return res.status(404).json({ message: "Bài viết không tồn tại" });
             }
 
-            res.status(200).json({ success: true, post });
+            res.status(200).json({
+                success: true,
+                data: { post },
+            });
         } catch(error) {
             res.status(500).json({ message: "Lỗi khi lấy chi tiết bài viết", error });
         }
@@ -144,7 +147,6 @@ const controller = {
             const post = await Post.findByIdAndUpdate(
                 id,
                 { isDel: true },
-                { new: true }
             );
 
             if(!post) {
@@ -156,6 +158,23 @@ const controller = {
             res.status(500).json({ message: "Lỗi khi xóa bài viết", error });
         }
     },
+    /* [DELETE] api/v1/posts/:id - Xóa cứng bài viết */
+    hardDelete: async (req, res) => {
+        try {
+            const { id } = req.params;
+
+            const deletedPost = await Post.findByIdAndDelete(id);
+            if(!deletedPost) {
+                return res.status(404).json({ message: "Không tìm thấy bài viết" });
+            }
+
+            res.status(200).json({ message: "Đã xóa bài viết khỏi database", deletedPost });
+        } catch(error) {
+            res.status(500).json({ message: "Lỗi khi xóa bài viết", error });
+        }
+    }
+
+
 };
 
 export default controller;

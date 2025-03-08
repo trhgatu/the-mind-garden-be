@@ -50,7 +50,7 @@ const controller = {
         try {
             const { title, text, author, source, reflection } = req.body;
             const createdBy = req.user?.id || null;
-
+            const today = new Date().toISOString().split("T")[0];
             const newQuote = new Quote({
                 title,
                 text,
@@ -58,7 +58,7 @@ const controller = {
                 reflection,
                 source,
                 createdBy,
-                date: new Date().toISOString().split("T")[0]
+                date: today
             });
 
             const savedQuote = await newQuote.save();
@@ -120,6 +120,7 @@ const controller = {
     getQuoteOfTheDay: async (req, res) => {
         try {
             const today = new Date().toISOString().split("T")[0];
+            await Quote.updateMany({ date: { $ne: today } }, { $unset: { date: "" } });
 
             let quote = await Quote.findOne({ date: today });
 
@@ -136,11 +137,10 @@ const controller = {
                     quote.date = today;
                     await quote.save();
                 }
-
             }
 
             res.status(200).json({
-                data: quote
+                data: quote,
             });
         } catch(error) {
             res.status(500).json({ message: "Lỗi khi lấy Quote of the Day", error });
