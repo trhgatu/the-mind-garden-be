@@ -120,24 +120,25 @@ const controller = {
     getQuoteOfTheDay: async (req, res) => {
         try {
             const today = new Date().toISOString().split("T")[0];
-            await Quote.updateMany({ date: { $ne: today } }, { $unset: { date: "" } });
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-            let quote = await Quote.findOne({ date: today });
+            let quote = await Quote.findOne({
+                $or: [
+                    { lastUsed: { $exists: false } },
+                    { lastUsed: { $lt: thirtyDaysAgo } }
+                ]
+            }).sort({ lastUsed: 1 });
 
             if(!quote) {
-                const count = await Quote.countDocuments();
-                if(count === 0) {
-                    return res.status(404).json({ message: "Không có quote nào trong database." });
-                }
-
-                const randomIndex = Math.floor(Math.random() * count);
-                quote = await Quote.findOne({ date: { $exists: false } }).skip(randomIndex);
-
-                if(quote) {
-                    quote.date = today;
-                    await quote.save();
-                }
+                quote = await Quote.findOne().sort({ lastUsed: 1 });
             }
+
+            if(!quote) {
+                return res.status(404).json({ message: "Không có quote nào trong database." });
+            }
+            quote.lastUsed = today;
+            await quote.save();
 
             res.status(200).json({
                 data: quote,
@@ -146,6 +147,27 @@ const controller = {
             res.status(500).json({ message: "Lỗi khi lấy Quote of the Day", error });
         }
     },
+
+    // [POST] api/v1/quotes/bulk-create - Thêm nhiều quotes cùng lúc
+    createMultipleQuotes: async (req, res) => {
+        try {
+            const quotes = req.body;
+            if(!Array.isArray(quotes) || quotes.length === 0) {
+                return res.status(400).json({ message: "Danh sách quote không hợp lệ." });
+            }
+            const newQuotes = await Quote.insertMany(quotes);
+
+            res.status(201).json({
+                message: "Thêm nhiều quote thành công!",
+                data: newQuotes
+            });
+        } catch(error) {
+            res.status(500).json({
+                message: "Lỗi khi thêm nhiều quote",
+                error: error.message || error
+            });
+        }
+    }
 };
 
 export default controller;

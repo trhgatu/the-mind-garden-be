@@ -10,4 +10,5 @@ router.get("/:slug", controller.detail);
 router.put("/:id", controller.update);
 router.delete("/soft-delete/:id", controller.delete);
 router.delete("/hard-delete/:id", controller.hardDelete);
+
 export default router;

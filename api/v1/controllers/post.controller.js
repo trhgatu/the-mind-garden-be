@@ -1,4 +1,3 @@
-import { uploadImageToSupabase, deleteImageFromSupabase } from "../services/supabase/supabaseServices.js";
 import Post from "../models/post.model.js";
 import User from "../models/user.model.js";
 import Category from "../models/category.model.js";

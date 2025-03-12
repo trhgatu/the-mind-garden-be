@@ -10,6 +10,6 @@ router.post('/create', controller.create); //authMiddleware
 router.get("/:id", controller.detail); //authMiddleware
 router.patch("/:id", controller.update);//authMiddleware
 router.delete("/:id",  controller.delete);//authMiddleware
-
+router.post("/create-multiple", controller.createMultipleQuotes)
 
 export default router;
