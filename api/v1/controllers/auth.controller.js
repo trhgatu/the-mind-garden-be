@@ -8,34 +8,29 @@ const controller = {
         try {
             const { email, password } = req.body;
 
-            // Kiểm tra xem email có tồn tại không
             const user = await User.findOne({ email });
             if(!user) {
                 return res.status(401).json({ success: false, message: "Email hoặc mật khẩu không đúng" });
             }
 
-            // Kiểm tra mật khẩu
             const isMatch = await bcrypt.compare(password, user.password);
             if(!isMatch) {
                 return res.status(401).json({ success: false, message: "Email hoặc mật khẩu không đúng" });
             }
 
-            // Tạo JWT Token
             const token = jwt.sign(
                 { id: user._id, email: user.email },
                 process.env.JWT_SECRET,
                 { expiresIn: "7d" }
             );
 
-            // Gửi token qua cookie
             res.cookie("sessionToken", token, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === "production", // Chỉ bật secure trong production
+                secure: true,
                 sameSite: "none",
-                maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
+                maxAge: 7 * 24 * 60 * 60 * 1000,
             });
 
-            // Trả về phản hồi thành công
             return res.status(200).json({
                 success: true,
                 message: "Đăng nhập thành công",
