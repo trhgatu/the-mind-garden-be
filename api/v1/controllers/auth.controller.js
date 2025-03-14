@@ -8,30 +8,35 @@ const controller = {
         try {
             const { email, password } = req.body;
 
+            // Kiểm tra xem email có tồn tại không
             const user = await User.findOne({ email });
             if(!user) {
-                return res.status(404).json({ message: "Email hoặc mật khẩu không đúng" });
+                return res.status(401).json({ success: false, message: "Email hoặc mật khẩu không đúng" });
             }
 
+            // Kiểm tra mật khẩu
             const isMatch = await bcrypt.compare(password, user.password);
             if(!isMatch) {
-                return res.status(400).json({ message: "Email hoặc mật khẩu không đúng" });
+                return res.status(401).json({ success: false, message: "Email hoặc mật khẩu không đúng" });
             }
 
+            // Tạo JWT Token
             const token = jwt.sign(
                 { id: user._id, email: user.email },
                 process.env.JWT_SECRET,
                 { expiresIn: "7d" }
             );
+
+            // Gửi token qua cookie
             res.cookie("sessionToken", token, {
                 httpOnly: true,
-                secure: true,
+                secure: process.env.NODE_ENV === "production", // Chỉ bật secure trong production
                 sameSite: "none",
-                maxAge: 7 * 24 * 60 * 60 * 1000,
+                maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
             });
 
-
-            res.status(200).json({
+            // Trả về phản hồi thành công
+            return res.status(200).json({
                 success: true,
                 message: "Đăng nhập thành công",
                 user: {
@@ -42,9 +47,15 @@ const controller = {
                 token
             });
         } catch(error) {
-            res.status(500).json({ message: "Lỗi khi đăng nhập", error: error.message });
+            console.error("Lỗi đăng nhập:", error);
+            return res.status(500).json({
+                success: false,
+                message: "Lỗi khi đăng nhập",
+                error: error.message
+            });
         }
     },
+
     /* [POST] api/v1/auth/logout */
     logout: async (req, res) => {
         try {

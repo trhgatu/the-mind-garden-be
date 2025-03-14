@@ -19,7 +19,6 @@ const startServer = async () => {
                 "https://the-mind-garden.vercel.app"
             ],
             credentials: true,
-            allowedHeaders: ["Content-Type", "Authorization"],
         };
         app.use(cors(corsOptions));
         app.use(bodyParser.urlencoded({ extended: false }));
