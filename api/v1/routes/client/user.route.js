@@ -10,5 +10,5 @@ router.get("/:id", authMiddleware, controller.detail);
 router.post("/create", controller.create);
 router.put("/:id", authMiddleware, controller.update);
 router.delete("/:id", authMiddleware, controller.delete);
-
+router.get("/profile/:username",controller.profile)
 export default router;
