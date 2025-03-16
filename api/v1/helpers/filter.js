@@ -17,6 +17,14 @@ export const getPostFilter = (query) => {
         filter.status = query.status;
     }
 
+    if(query.type) {
+        filter.type = query.type;
+    }
+
+    if (query.isApproved !== undefined) {
+        filter.isApproved = query.isApproved === "true";
+    }
+
     return filter;
 };
 

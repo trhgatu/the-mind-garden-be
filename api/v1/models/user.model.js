@@ -5,7 +5,9 @@ const userSchema = new mongoose.Schema({
         type: String
     },
     username: {
-        type: String
+        type: String,
+        required: true,
+        unique: true
     },
     email: {
         type: String
@@ -13,23 +15,28 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String
     },
-    role : {
-        type: String
+    role: {
+        type: String,
+        enum: ["admin", "user"],
+        default: "user"
     },
     avatar: {
-        type: String
+        type: String,
+        default: ""
+    },
+    displayName: {
+        type: String,
+        default: "Độc giả ẩn danh"
     },
     coverPhoto: {
         type: String
-    },
-    nickname: {
-        type: String,
     },
     isAI: {
         type: Boolean,
         default: false
     }
-
+}, {
+    timestamps: true
 })
 const User = mongoose.model('User', userSchema, 'users')
 

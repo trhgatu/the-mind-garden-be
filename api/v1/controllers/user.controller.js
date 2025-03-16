@@ -28,7 +28,11 @@ const controller = {
     /* [POST] api/v1/users/create - Tạo user mới */
     create: async (req, res) => {
         try {
-            const { name, email, password } = req.body;
+            const { name, username, email, password } = req.body;
+
+            if(!username) {
+                return res.status(400).json({ message: "Username không được để trống" });
+            }
 
             const existingUser = await User.findOne({ email });
             if(existingUser) {
@@ -37,13 +41,13 @@ const controller = {
 
             const hashedPassword = await bcrypt.hash(password, 10);
 
-            const newUser = new User({ name, email, password: hashedPassword });
+            const newUser = new User({ name, username, email, password: hashedPassword });
             await newUser.save();
 
             res.status(201).json({
                 success: true,
                 message: "Tạo người dùng thành công",
-                user: { id: newUser._id, name, email }
+                user: { id: newUser._id, name, username, email }
             });
         } catch(error) {
             res.status(500).json({ message: "Lỗi khi tạo người dùng", error: error.message });

@@ -46,6 +46,12 @@ const postSchema = new mongoose.Schema(
       ref: "Category",
       required: false, //true
     },
+    type: {
+      type: String,
+      enum: ["letter", "article"],
+      default: "article"
+    },
+    isApproved: { type: Boolean, default: false },
     tags: [
       {
         type: mongoose.Schema.Types.ObjectId,
