@@ -5,6 +5,7 @@ import tagRoutes from "./tag.route.js";
 import userRoutes from "./user.route.js";
 import categoryRoutes from "./category.route.js";
 import quoteRoutes from "./quote.route.js";
+import spotifyRoutes from "./spotify.route.js"
 
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
 
@@ -19,6 +20,7 @@ const clientRouter = (app) => {
     app.use(version + "/auth", authRoutes);
     app.use(version + "/ai", aiRoutes);
     app.use(version + "/tags", tagRoutes);
+    app.use(version + "/spotify", spotifyRoutes)
 };
 
 export default clientRouter;
